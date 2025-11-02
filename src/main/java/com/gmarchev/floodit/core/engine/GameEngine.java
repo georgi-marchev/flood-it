@@ -2,7 +2,9 @@ package com.gmarchev.floodit.core.engine;
 
 public interface GameEngine {
 
-	int[][] getGrid();
+	void addObserver(GameObserver observer);
+
+	void removeObserver(GameObserver observer);
 
 	void start();
 

@@ -1,5 +1,8 @@
 package com.gmarchev.floodit.core.engine;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.gmarchev.floodit.core.board.Board;
 import com.gmarchev.floodit.core.strategy.FloodStrategy;
 
@@ -11,12 +14,27 @@ public class GameEngineImpl implements GameEngine {
 
 	private int moveCount;
 
+	private final List<GameObserver> observers;
+
 	boolean isStarted;
 
 	public GameEngineImpl(Board board, FloodStrategy floodStrategy) {
 
 		this.board = board;
 		this.floodStrategy = floodStrategy;
+		this.observers =  new ArrayList<>();
+	}
+
+	@Override
+	public void addObserver(GameObserver observer) {
+
+		observers.add(observer);
+	}
+
+	@Override
+	public void removeObserver(GameObserver observer) {
+
+		observers.remove(observer);
 	}
 
 	@Override
@@ -25,12 +43,18 @@ public class GameEngineImpl implements GameEngine {
 		floodStrategy.flood(board, board.getFloodColor());
 
 		isStarted = true;
+
+		notifyObservers();
 	}
 
-	@Override
-	public int[][] getGrid() {
+	private void notifyObservers() {
 
-		return board.getGrid();
+		GameState gameState = new GameState(moveCount, board.isCompleted(), board.getGrid());
+
+		for (GameObserver observer : observers) {
+
+			observer.onGameStateUpdate(gameState);
+		}
 	}
 
 	@Override
@@ -49,6 +73,8 @@ public class GameEngineImpl implements GameEngine {
 		floodStrategy.flood(board, color);
 
 		moveCount++;
+
+		notifyObservers();
 
 		return true;
 	}
