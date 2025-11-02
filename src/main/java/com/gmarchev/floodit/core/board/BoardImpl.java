@@ -6,9 +6,9 @@ public class BoardImpl implements Board {
 
 	public static final int MINIMUM_BOARD_SIZE_COL = 2;
 
-	private final int[][] grid;
+	private int[][] grid;
 
-	private final boolean[][] flooded;
+	private boolean[][] flooded;
 
 	private int floodColor;
 
@@ -120,5 +120,32 @@ public class BoardImpl implements Board {
 	public boolean isCompleted() {
 
 		return floodedCount == grid.length * grid[0].length;
+	}
+
+	@Override
+	public BoardMemento createMemento() {
+
+		int[][] gridCopy = new int[grid.length][];
+		for (int i = 0; i < grid.length; i++) {
+
+			gridCopy[i] = grid[i].clone();
+		}
+
+		boolean[][] floodedCopy = new boolean[flooded.length][];
+		for (int i = 0; i < flooded.length; i++) {
+
+			floodedCopy[i] = flooded[i].clone();
+		}
+
+		return new BoardMemento(gridCopy, floodedCopy, floodedCount);
+	}
+
+	@Override
+	public void restoreFromMemento(BoardMemento memento) {
+
+		this.grid = memento.grid();
+		this.flooded = memento.flooded();
+		this.floodedCount = memento.floodedCount();
+		this.floodColor = grid[0][0];
 	}
 }

@@ -19,4 +19,8 @@ public interface Board {
 	boolean isCellFlooded(int row, int col);
 
 	boolean isCompleted();
+
+	BoardMemento createMemento();
+
+	void restoreFromMemento(BoardMemento memento);
 }

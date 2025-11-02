@@ -1,9 +1,12 @@
 package com.gmarchev.floodit.core.engine;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 
 import com.gmarchev.floodit.core.board.Board;
+import com.gmarchev.floodit.core.board.BoardMemento;
 import com.gmarchev.floodit.core.strategy.FloodStrategy;
 
 public class GameEngineImpl implements GameEngine {
@@ -11,6 +14,8 @@ public class GameEngineImpl implements GameEngine {
 	private final Board board;
 
 	private final FloodStrategy floodStrategy;
+
+	private final Deque<BoardMemento> historyStack;
 
 	private int moveCount;
 
@@ -23,6 +28,7 @@ public class GameEngineImpl implements GameEngine {
 		this.board = board;
 		this.floodStrategy = floodStrategy;
 		this.observers =  new ArrayList<>();
+		this.historyStack = new ArrayDeque<>();
 	}
 
 	@Override
@@ -39,6 +45,11 @@ public class GameEngineImpl implements GameEngine {
 
 	@Override
 	public void start() {
+
+		if (isStarted) {
+
+			throw new IllegalStateException("Game has already been started!");
+		}
 
 		floodStrategy.flood(board, board.getFloodColor());
 
@@ -70,6 +81,8 @@ public class GameEngineImpl implements GameEngine {
 			return false;
 		}
 
+		historyStack.push(board.createMemento());
+
 		floodStrategy.flood(board, color);
 
 		moveCount++;
@@ -83,5 +96,18 @@ public class GameEngineImpl implements GameEngine {
 	public boolean isCompleted() {
 
 		return board.isCompleted();
+	}
+
+	@Override
+	public void undo() {
+
+		if (!historyStack.isEmpty()) {
+
+			board.restoreFromMemento(historyStack.pop());
+
+			moveCount--;
+
+			notifyObservers();
+		}
 	}
 }

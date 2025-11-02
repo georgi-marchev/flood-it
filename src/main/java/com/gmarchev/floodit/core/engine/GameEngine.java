@@ -11,4 +11,6 @@ public interface GameEngine {
 	boolean flood(int color);
 
 	boolean isCompleted();
+
+	void undo();
 }

@@ -2,7 +2,7 @@ package com.gmarchev.floodit.core.board;
 
 import java.util.Random;
 
-public class RandomBoardCreator {
+public class RandomColorBoardCreator {
 
 	public static Board create(int rowCount, int colCount, int... colorIds) {
 
