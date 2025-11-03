@@ -1,1 +1,1 @@
-TODO
+An implementation of the game Flood-it, written as part of a university course on design patterns.
