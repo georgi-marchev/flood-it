@@ -1,13 +1,18 @@
 package com.gmarchev.floodit.game;
 
+import java.io.PrintStream;
+
 import com.gmarchev.floodit.core.board.Board;
-import com.gmarchev.floodit.core.board.RandomBoardCreator;
+import com.gmarchev.floodit.core.board.RandomColorBoardCreator;
 import com.gmarchev.floodit.core.engine.GameEngine;
 import com.gmarchev.floodit.core.engine.GameEngineImpl;
 import com.gmarchev.floodit.core.strategy.FloodStrategy;
 import com.gmarchev.floodit.core.strategy.FloodStrategyFactory;
 
-public class Main {
+/**
+ * This is a demo implementation of the game core, using the system console as UI.
+ */
+public class GameApp {
 
 	public static void main(String[] args) {
 
@@ -15,18 +20,19 @@ public class Main {
 
 		int[] colors = {1, 2, 3, 4, 5};
 
-		Board board = RandomBoardCreator.create(rows, columns, colors);
+		PrintStream outputPrinter = System.out;
 
-		FloodStrategy strategy = new TimeTrackingFloodStrategyDecorator(
-				FloodStrategyFactory.create(rows, columns), System.out);
+		Board board = RandomColorBoardCreator.create(rows, columns, colors);
+
+		FloodStrategy strategy = FloodStrategyFactory.create(rows, columns);
 
 		GameEngine engine = new GameEngineImpl(board, strategy);
 
-		engine.addObserver(new ConsoleRenderer(System.out));
+		engine.addObserver(new GameRenderer(outputPrinter));
 
-		try (ConsoleGame game = new ConsoleGame(engine, System.in, System.out)) {
+		try (GameLoop game = new GameLoop(engine, System.in, outputPrinter)) {
 
-			game.start()
+			game.start();
 		}
 	}
 }
