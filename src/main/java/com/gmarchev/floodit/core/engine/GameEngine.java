@@ -8,7 +8,7 @@ public interface GameEngine {
 
 	void start();
 
-	boolean flood(int color);
+	boolean flood(int color) throws InvalidInputException;
 
 	boolean isCompleted();
 

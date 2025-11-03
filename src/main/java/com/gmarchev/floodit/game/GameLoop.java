@@ -6,6 +6,7 @@ import java.io.PrintStream;
 import java.util.Scanner;
 
 import com.gmarchev.floodit.core.engine.GameEngine;
+import com.gmarchev.floodit.core.engine.InvalidInputException;
 
 public class GameLoop implements Closeable {
 
@@ -34,7 +35,7 @@ public class GameLoop implements Closeable {
 
 			String input = scanner.next().trim().toLowerCase();
 
-			if (input.equals("u")) {
+			if (input.toLowerCase().equals("u")) {
 
 				engine.undo();
 
@@ -49,6 +50,10 @@ public class GameLoop implements Closeable {
 			} catch (NumberFormatException e) {
 
 				printer.println("Invalid input. Please enter a number.");
+
+			} catch (InvalidInputException e) {
+
+				printer.println(e.getMessage());
 			}
 		}
 

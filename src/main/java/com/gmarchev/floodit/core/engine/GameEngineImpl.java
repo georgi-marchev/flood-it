@@ -2,8 +2,11 @@ package com.gmarchev.floodit.core.engine;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.gmarchev.floodit.core.board.Board;
 import com.gmarchev.floodit.core.board.BoardMemento;
@@ -23,12 +26,23 @@ public class GameEngineImpl implements GameEngine {
 
 	boolean isStarted;
 
+	private final Set<Integer> colors;
+
 	public GameEngineImpl(Board board, FloodStrategy floodStrategy) {
 
 		this.board = board;
 		this.floodStrategy = floodStrategy;
 		this.observers =  new ArrayList<>();
 		this.historyStack = new ArrayDeque<>();
+		this.colors = extractColors(board.getGrid());
+	}
+
+	private static Set<Integer> extractColors(int[][] grid) {
+
+		return Arrays.stream(grid)
+				.flatMapToInt(Arrays::stream)
+				.boxed()
+				.collect(Collectors.toSet());
 	}
 
 	@Override
@@ -69,7 +83,7 @@ public class GameEngineImpl implements GameEngine {
 	}
 
 	@Override
-	public boolean flood(int color) {
+	public boolean flood(int color) throws InvalidInputException {
 
 		if (!isStarted) {
 
@@ -79,6 +93,11 @@ public class GameEngineImpl implements GameEngine {
 		if (board.getFloodColor() == color) {
 
 			return false;
+		}
+
+		if (!colors.contains(color)) {
+
+			throw new InvalidInputException("Invalid color " + color);
 		}
 
 		historyStack.push(board.createMemento());
