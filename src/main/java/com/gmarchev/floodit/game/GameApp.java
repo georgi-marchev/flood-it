@@ -1,5 +1,6 @@
 package com.gmarchev.floodit.game;
 
+import java.io.InputStream;
 import java.io.PrintStream;
 
 import com.gmarchev.floodit.core.board.Board;
@@ -11,6 +12,9 @@ import com.gmarchev.floodit.core.strategy.FloodStrategyFactory;
 
 /**
  * This is a demo implementation of the game core, using the system console as UI.
+ * <p>
+ * This class is also the Composition Root of the application, which determines all concrete implementations that will
+ * be used.
  */
 public class GameApp {
 
@@ -20,17 +24,19 @@ public class GameApp {
 
 		int[] colors = {1, 2, 3, 4, 5};
 
+		InputStream inputReader = System.in;
 		PrintStream outputPrinter = System.out;
 
 		Board board = RandomColorBoardCreator.create(rows, columns, colors);
 
-		FloodStrategy strategy = FloodStrategyFactory.create(rows, columns);
+		FloodStrategy strategy = new TimeTrackingFloodStrategyDecorator(
+				FloodStrategyFactory.create(rows, columns), outputPrinter);
 
 		GameEngine engine = new GameEngineImpl(board, strategy);
 
 		engine.addObserver(new GameRenderer(outputPrinter));
 
-		try (GameLoop game = new GameLoop(engine, System.in, outputPrinter)) {
+		try (GameLoop game = new GameLoop(engine, inputReader, outputPrinter)) {
 
 			game.start();
 		}
