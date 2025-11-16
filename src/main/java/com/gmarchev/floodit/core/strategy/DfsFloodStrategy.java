@@ -8,18 +8,17 @@ import com.gmarchev.floodit.core.utils.BoardMovementUtil;
  */
 public class DfsFloodStrategy implements FloodStrategy {
 
-	private final int rowCount;
-
-	private final int colCount;
-
-	public DfsFloodStrategy(int rowCount, int colCount) {
-
-		this.rowCount = rowCount;
-		this.colCount = colCount;
-	}
-
 	@Override
 	public void flood(Board board, int color) {
+
+		int rowCount = board.getGrid().length;
+
+		if (rowCount < 1) {
+
+			throw new IllegalArgumentException("Board must have at least one row");
+		}
+
+		int colCount = board.getGrid()[0].length;
 
 		dfs(board, 0, 0, color, new boolean[rowCount][colCount]);
 

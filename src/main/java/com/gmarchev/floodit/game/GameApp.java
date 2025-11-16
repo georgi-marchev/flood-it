@@ -8,7 +8,7 @@ import com.gmarchev.floodit.core.board.RandomColorBoardCreator;
 import com.gmarchev.floodit.core.engine.GameEngine;
 import com.gmarchev.floodit.core.engine.GameEngineImpl;
 import com.gmarchev.floodit.core.strategy.FloodStrategy;
-import com.gmarchev.floodit.core.strategy.FloodStrategyFactory;
+import com.gmarchev.floodit.core.strategy.OptimizedFloodStrategyFactory;
 
 /**
  * This is a demo implementation of the game core, using the system console as UI.
@@ -30,7 +30,7 @@ public class GameApp {
 		Board board = RandomColorBoardCreator.create(rows, columns, colors);
 
 		FloodStrategy strategy = new TimeTrackingFloodStrategyDecorator(
-				FloodStrategyFactory.create(rows, columns), outputPrinter);
+				OptimizedFloodStrategyFactory.create(rows), outputPrinter);
 
 		GameEngine engine = new GameEngineImpl(board, strategy);
 
